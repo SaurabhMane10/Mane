@@ -1,0 +1,174 @@
+#include <iostream>
+#include <vector>
+
+class Vector {
+private:
+    std::vector<double> elements;
+
+public:
+ 
+    Vector() = default;
+    Vector(const std::vector<double>& inputElements) : elements(inputElements) {}
+
+
+    const std::vector<double>& getElements() const {
+        return elements;
+    }
+
+    void setElements(const std::vector<double>& newElements) {
+        elements = newElements;
+    }
+
+   
+    Vector& operator+=(const Vector& other) {
+        if (elements.size() == other.elements.size()) {
+            for (size_t i = 0; i < elements.size(); ++i) {
+                elements[i] += other.elements[i];
+            }
+        } else {
+            std::cerr << "Error: Vector sizes do not match for addition." << std::endl;
+        }
+        return *this;
+    }
+
+    Vector& operator-=(const Vector& other) {
+        if (elements.size() == other.elements.size()) {
+            for (size_t i = 0; i < elements.size(); ++i) {
+                elements[i] -= other.elements[i];
+            }
+        } else {
+            std::cerr << "Error: Vector sizes do not match for subtraction." << std::endl;
+        }
+        return *this;
+    }
+
+   
+    Vector& operator*=(double scalar) {
+        for (double& element : elements) {
+            element *= scalar;
+        }
+        return *this;
+    }
+
+    Vector& operator/=(double scalar) {
+        if (scalar != 0.0) {
+            for (double& element : elements) {
+                element /= scalar;
+            }
+        } else {
+            std::cerr << "Error: Division by zero." << std::endl;
+        }
+        return *this;
+    }
+
+  
+    Vector operator+(const Vector& other) const {
+        Vector result(*this);
+        result += other;
+        return result;
+    }
+
+    Vector operator-(const Vector& other) const {
+        Vector result(*this);
+        result -= other;
+        return result;
+    }
+
+ 
+    Vector operator*(double scalar) const {
+        Vector result(*this);
+        result *= scalar;
+        return result;
+    }
+
+    Vector operator/(double scalar) const {
+        Vector result(*this);
+        result /= scalar;
+        return result;
+    }
+
+   
+    double operator*(const Vector& other) const {
+        double result = 0.0;
+        if (elements.size() == other.elements.size()) {
+            for (size_t i = 0; i < elements.size(); ++i) {
+                result += elements[i] * other.elements[i];
+            }
+        } else {
+            std::cerr << "Error: Vector sizes do not match for scalar product." << std::endl;
+        }
+        return result;
+    }
+
+    friend std::ostream& operator<<(std::ostream& out, const Vector& vec) {
+        out << "[";
+        for (size_t i = 0; i < vec.elements.size(); ++i) {
+            out << vec.elements[i];
+            if (i < vec.elements.size() - 1) {
+                out << ", ";
+            }
+        }
+        out << "]";
+        return out;
+    }
+
+    friend std::istream& operator>>(std::istream& in, Vector& vec) {
+        char bracket;
+        double element;
+        vec.elements.clear();
+
+        in >> bracket;
+        while (in >> element >> bracket && bracket == ',') {
+            vec.elements.push_back(element);
+        }
+
+       
+        if (bracket == ']') {
+            vec.elements.push_back(element);
+        } else {
+            std::cerr << "Error: Invalid vector input format." << std::endl;
+            in.setstate(std::ios::failbit);
+        }
+
+        return in;
+    }
+
+    
+    Vector& operator=(const Vector& other) {
+        if (this != &other) {
+            elements = other.elements;
+        }
+        return *this;
+    }
+};
+
+int main() {
+    Vector v1, v2;
+
+  
+    std::cout << "Enter elements for vector v1 (e.g., [1.0, 2.0, 3.0]): ";
+    std::cin >> v1;
+    std::cout << "Enter elements for vector v2 (e.g., [4.0, 5.0, 6.0]): ";
+    std::cin >> v2;
+
+    std::cout << "v1 = " << v1 << std::endl;
+    std::cout << "v2 = " << v2 << std::endl;
+
+    Vector sum = v1 + v2;
+    Vector difference = v1 - v2;
+    Vector scaled = v1 * 2.5;
+    Vector normalized = v2 / 3.0;
+
+    std::cout << "Sum: " << sum << std::endl;
+    std::cout << "Difference: " << difference << std::endl;
+    std::cout << "Scaled: " << scaled << std::endl;
+    std::cout << "Normalized: " << normalized << std::endl;
+
+    double dotProduct = v1 * v2;
+    std::cout << "Dot product: " << dotProduct << std::endl;
+
+
+    
+
+    return 0;
+}
