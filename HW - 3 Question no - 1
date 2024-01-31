@@ -1,0 +1,134 @@
+#include <iostream>
+#include <array>
+
+template<typename T, size_t Rows, size_t Cols>
+class Matrix {
+private:
+    std::array<std::array<T, Cols>, Rows> data;
+
+public:
+    // Constructors
+    Matrix() {}
+
+    // Overloaded operators
+    Matrix operator+(const Matrix& other) const {
+        Matrix result;
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < Cols; ++j) {
+                result.data[i][j] = this->data[i][j] + other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    Matrix operator-(const Matrix& other) const {
+        Matrix result;
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < Cols; ++j) {
+                result.data[i][j] = this->data[i][j] - other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    template<size_t OtherCols>
+    Matrix<T, Rows, OtherCols> operator*(const Matrix<T, Cols, OtherCols>& other) const {
+        Matrix<T, Rows, OtherCols> result;
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < OtherCols; ++j) {
+                result.data[i][j] = 0;
+                for (size_t k = 0; k < Cols; ++k) {
+                    result.data[i][j] += this->data[i][k] * other.data[k][j];
+                }
+            }
+        }
+        return result;
+    }
+
+    Matrix operator*(const T scalar) const {
+        Matrix result;
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < Cols; ++j) {
+                result.data[i][j] = this->data[i][j] * scalar;
+            }
+        }
+        return result;
+    }
+
+    // Transpose function
+    Matrix<T, Cols, Rows> transpose() const {
+        Matrix<T, Cols, Rows> transposed;
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < Cols; ++j) {
+                transposed.data[j][i] = this->data[i][j];
+            }
+        }
+        return transposed;
+    }
+
+    // Print method for debugging
+    void print() const {
+        for (size_t i = 0; i < Rows; ++i) {
+            for (size_t j = 0; j < Cols; ++j) {
+                std::cout << data[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+};
+
+// Specialization for vector with type int
+template<size_t N>
+class Matrix<int, N, 1> {
+private:
+    std::array<int, N> data;
+
+public:
+    // Constructor
+    Matrix() {}
+
+    // Methods
+    int norm() const {
+        int sum = 0;
+        for (size_t i = 0; i < N; ++i) {
+            sum += data[i] * data[i];
+        }
+        return sum;
+    }
+
+    // Print method for debugging
+    void print() const {
+        for (size_t i = 0; i < N; ++i) {
+            std::cout << data[i] << std::endl;
+        }
+    }
+};
+
+int main() {
+    Matrix<int, 2, 2> m1;
+    m1.print();
+
+    Matrix<int, 2, 2> m2;
+    m2.print();
+
+    Matrix<int, 2, 2> sum = m1 + m2;
+    sum.print();
+
+    Matrix<int, 2, 2> diff = m1 - m2;
+    diff.print();
+
+    Matrix<int, 2, 2> product = m1 * m2;
+    product.print();
+
+    Matrix<int, 2, 2> scaled = m1 * 5;
+    scaled.print();
+
+    Matrix<int, 2, 2> transposed = m1.transpose();
+    transposed.print();
+
+    Matrix<int, 3, 1> v;
+    v.print();
+    std::cout << "Norm: " << v.norm() << std::endl;
+
+    return 0;
+}
