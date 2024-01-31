@@ -1,0 +1,22 @@
+#include <iostream>
+
+
+template <int n, int k>
+struct SumSequence {
+    static constexpr int value = n + SumSequence<n, k - 1>::value * n;
+};
+
+template <int n>
+struct SumSequence<n, 0> {
+    static constexpr int value = 0;
+};
+
+int main() {
+    
+    constexpr int result = SumSequence<3, 4>::value;
+
+    
+    std::cout << "SumSequence<3, 4>::value = " << result << std::endl;
+
+    return 0;
+}
